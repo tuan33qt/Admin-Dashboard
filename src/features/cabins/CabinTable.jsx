@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { getCabins } from "../../services/apiCabins";
 import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
+import { useSearchParams } from "react-router-dom";
 
 // v2
 // Right now this is not really reusable... But we will want to use a similar table for guests as well, but with different columns. ALSO, right now we are defining these columns in BOTH the TableHeader and the CabinRow, which is not good at all. Instead, it would be much better to simply pass the columns into the Table, and the table would give access to the columns to both the header and row. So how can we do that? Well we can again use a compound component! We don't HAVE to do it like this, there's a million ways to implement a table, also without CSS Grid, but this is what I chose
@@ -52,8 +53,27 @@ function CabinTable() {
     queryKey: ["cabin"],
     queryFn: getCabins,
   });
-  console.log(cabins);
+  const [searchParams] = useSearchParams();
+  const filterValue = searchParams.get("discount") || "all";
+  let filterCabins = cabins || [];
+  if (cabins) {
+    if (filterValue === "all") {
+      filterCabins = cabins;
+    } else if (filterValue === "no-discount") {
+      filterCabins = cabins.filter((cabin) => cabin.discount === 0);
+    } else if (filterValue === "with-discount") {
+      filterCabins = cabins.filter((cabin) => cabin.discount > 0);
+    }
+  }
   if (isLoading) return <Spinner />;
+  if (error) return <div>Error: {error.message}</div>;
+  const sortBy = searchParams.get("sortBy") || "startDate-asc";
+  const [field, direction] = sortBy.split("-");
+  const modifier = direction === "asc" ? 1 : -1;
+  const sortedCabins = filterCabins.sort(
+    (a, b) => (a[field] - b[field]) * modifier
+  );
+
   return (
     <Table>
       <TableHeader>
@@ -64,7 +84,7 @@ function CabinTable() {
         <div>Discount</div>
         <div></div>
       </TableHeader>
-      {cabins.map((cabin) => (
+      {sortedCabins.map((cabin) => (
         <CabinRow cabin={cabin} key={cabin.id} />
       ))}
     </Table>

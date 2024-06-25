@@ -5,6 +5,7 @@ import { deleteCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
+import { HiChartSquareBar, HiPencil, HiTrash } from "react-icons/hi";
 // v1
 const TableRow = styled.div`
   display: grid;
@@ -76,11 +77,14 @@ function CabinRow({ cabin }) {
         <Price>{formatCurrency(regularPrice)}</Price>
         <Discount>{formatCurrency(discount)}</Discount>
         <div>
+          <button>
+            <HiChartSquareBar />
+          </button>
           <button onClick={() => setShowForm((showform) => !showform)}>
-            Edit
+            <HiPencil />
           </button>
           <button onClick={() => mutate(cabinId)} disabled={isDeleteing}>
-            Delete
+            <HiTrash />
           </button>
         </div>
       </TableRow>

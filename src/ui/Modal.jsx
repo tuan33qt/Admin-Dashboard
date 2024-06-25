@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { HiOutlineX } from "react-icons/hi";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -48,3 +49,17 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+function Modal({ children, onClose }) {
+  return (
+    <Overlay>
+      <StyledModal>
+        <Button onClick={onClose}>
+          <HiOutlineX />
+        </Button>
+        <div>{children}</div>
+      </StyledModal>
+    </Overlay>
+  );
+}
+
+export default Modal;

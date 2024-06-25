@@ -5,17 +5,19 @@ import { getCabins } from "../services/apiCabins";
 import CabinTable from "../features/cabins/CabinTable";
 import Button from "../ui/Button";
 import CreateCabinForm from "../features/cabins/CreateCabinForm";
+import Modal from "../ui/Modal";
+import AddCabin from "../features/cabins/AddCabin";
+import CabinTableOperations from "../features/cabins/CabinTableOperations";
 function Cabins() {
-  const [showform, setShowForm] = useState(false);
   return (
     <>
       <Row type="horizontal">
         <Heading as="h1">All cabins</Heading>
+        <CabinTableOperations />
       </Row>
       <Row>
         <CabinTable />
-        <Button onClick={() => setShowForm(!showform)}>Add new cabin</Button>
-        {showform && <CreateCabinForm />}
+        <AddCabin />
       </Row>
     </>
   );
