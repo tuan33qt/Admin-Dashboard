@@ -1,27 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBookings } from "../../services/apiBookings";
-import { useSearchParams } from "react-router-dom";
-function useBooking() {
-  const [searchParams] = useSearchParams();
-  // Filter
-  const filterValue = searchParams.get("status"); // Lấy giá trị của tham số "status" từ searchParams
-  const filter =
-    !filterValue || filterValue === "all" // Kiểm tra nếu filterValue là null, undefined, chuỗi rỗng hoặc bằng "all"
-      ? null // Nếu đúng thì gán giá trị null cho biến filter
-      : { field: "status", value: filterValue }; // Ngược lại, tạo một đối tượng với field là "status" và value là filterValue
-  // SORT
-  const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
-  const [field, direction] = sortByRaw.split("-"); //Chia chuỗi sortByRaw thành một mảng dựa trên dấu gạch ngang ("-").
-  const sortBy = { field, direction };
+import { useParams } from "react-router-dom";
+import { getBooking } from "../../services/apiBookings";
+
+export function useBooking() {
+  const { bookingId } = useParams();
+
   const {
     isLoading,
-    data: bookings,
+    data: booking,
     error,
   } = useQuery({
-    queryKey: ["bookings", filter, sortBy],
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryKey: ["booking", bookingId],
+    queryFn: () => getBooking(bookingId),
+    retry: false,
   });
-  return { isLoading, error, bookings };
-}
 
+  return { isLoading, error, booking };
+}
 export default useBooking;
